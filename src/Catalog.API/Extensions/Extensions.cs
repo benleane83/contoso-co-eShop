@@ -1,10 +1,19 @@
 ﻿using eShop.Catalog.API.Services;
-using Microsoft.SemanticKernel;
+using Microsoft.Extensions.AI;
+using OpenAI;
 
 public static class Extensions
 {
     public static void AddApplicationServices(this IHostApplicationBuilder builder)
     {
+        // Avoid loading full database config and migrations if startup
+        // is being invoked from build-time OpenAPI generation
+        if (builder.Environment.IsBuild())
+        {
+            builder.Services.AddDbContext<CatalogContext>();
+            return;
+        }
+
         builder.AddNpgsqlDbContext<CatalogContext>("catalogdb", configureDbContextOptions: dbContextOptionsBuilder =>
         {
             dbContextOptionsBuilder.UseNpgsql(builder =>
@@ -28,17 +37,22 @@ public static class Extensions
         builder.Services.AddOptions<CatalogOptions>()
             .BindConfiguration(nameof(CatalogOptions));
 
-        if (builder.Configuration["AI:Onnx:EmbeddingModelPath"] is string modelPath &&
-            builder.Configuration["AI:Onnx:EmbeddingVocabPath"] is string vocabPath)
+        if (builder.Configuration["AI:Ollama:Endpoint"] is string ollamaEndpoint && !string.IsNullOrWhiteSpace(ollamaEndpoint))
         {
-            builder.Services.AddBertOnnxTextEmbeddingGeneration(modelPath, vocabPath);
+            builder.Services.AddEmbeddingGenerator(new OllamaEmbeddingGenerator(ollamaEndpoint, builder.Configuration["AI:Ollama:EmbeddingModel"]))
+                .UseOpenTelemetry()
+                .UseLogging()
+                .Build();
         }
         else if (!string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("openai")))
         {
-            builder.AddAzureOpenAIClient("openai");
-            builder.Services.AddOpenAITextEmbeddingGeneration(builder.Configuration["AIOptions:OpenAI:EmbeddingName"] ?? "text-embedding-3-small");
+            builder.AddOpenAIClientFromConfiguration("openai");
+            builder.Services.AddEmbeddingGenerator(sp => sp.GetRequiredService<OpenAIClient>().AsEmbeddingGenerator(builder.Configuration["AI:OpenAI:EmbeddingModel"]!))
+                .UseOpenTelemetry()
+                .UseLogging()
+                .Build();
         }
 
-        builder.Services.AddSingleton<ICatalogAI, CatalogAI>();
+        builder.Services.AddScoped<ICatalogAI, CatalogAI>();
     }
 }
