@@ -1,0 +1,4 @@
+{
+    "copilot.vision.provider": "AzureOpenAI",
+    "copilot.vision.azureEndpoint": "https://admin-m5ny2tbt-eastus2.cognitiveservices.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-08-01-preview"
+}
