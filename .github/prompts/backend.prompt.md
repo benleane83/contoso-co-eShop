@@ -1,0 +1,1 @@
+All Backend code should be written as .NET Core APIs.

@@ -1,0 +1,1 @@
+New frontend features should always use the MVC pattern.
