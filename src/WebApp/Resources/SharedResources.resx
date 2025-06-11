@@ -85,4 +85,22 @@
   <data name="Language.SelectLanguage" xml:space="preserve">
     <value>Select Language</value>
   </data>
+  <data name="Orders.Title" xml:space="preserve">
+    <value>Orders</value>
+  </data>
+  <data name="Orders.NoOrders" xml:space="preserve">
+    <value>You haven't yet placed any orders.</value>
+  </data>
+  <data name="Orders.Number" xml:space="preserve">
+    <value>Number</value>
+  </data>
+  <data name="Orders.Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Orders.Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Orders.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
 </root>

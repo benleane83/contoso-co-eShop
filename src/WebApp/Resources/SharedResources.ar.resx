@@ -85,4 +85,22 @@
   <data name="Language.SelectLanguage" xml:space="preserve">
     <value>اختر اللغة</value>
   </data>
+  <data name="Orders.Title" xml:space="preserve">
+    <value>الطلبات</value>
+  </data>
+  <data name="Orders.NoOrders" xml:space="preserve">
+    <value>لم تقم بتقديم أي طلبات بعد.</value>
+  </data>
+  <data name="Orders.Number" xml:space="preserve">
+    <value>الرقم</value>
+  </data>
+  <data name="Orders.Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="Orders.Total" xml:space="preserve">
+    <value>المجموع</value>
+  </data>
+  <data name="Orders.Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
 </root>
