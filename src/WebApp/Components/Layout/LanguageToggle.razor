@@ -1,0 +1,62 @@
+@using Microsoft.Extensions.Localization
+@using eShop.WebApp.Resources
+@inject ILanguageService LanguageService
+@inject IStringLocalizer<SharedResources> Localizer
+@inject NavigationManager Navigation
+
+<div class="language-toggle">
+    <div class="dropdown-menu">
+        <span class="dropdown-button language-button" title="@Localizer["Language.SelectLanguage"]">
+            @GetCurrentCultureFlag() @GetCurrentCultureCode()
+            <img src="icons/chevron-down.svg" alt="" class="chevron" />
+        </span>
+        <div class="dropdown-content language-dropdown">
+            @foreach (var culture in LanguageService.GetSupportedCultures())
+            {
+                <button type="button" 
+                        class="dropdown-item language-item @(IsCurrentCulture(culture) ? "active" : "")" 
+                        @onclick="() => SetCultureAsync(culture.Code)">
+                    <span class="flag">@culture.Flag</span>
+                    <span class="name">@culture.Name</span>
+                    @if (IsCurrentCulture(culture))
+                    {
+                        <span class="checkmark">✓</span>
+                    }
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+
+    private async Task SetCultureAsync(string culture)
+    {
+        if (HttpContext != null)
+        {
+            await LanguageService.SetCultureAsync(culture, HttpContext);
+            // Refresh the page to apply the new culture
+            Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+        }
+    }
+
+    private bool IsCurrentCulture(CultureOption culture)
+    {
+        return LanguageService.GetCurrentCulture() == culture.Code;
+    }
+
+    private string GetCurrentCultureFlag()
+    {
+        var currentCulture = LanguageService.GetCurrentCulture();
+        return LanguageService.GetSupportedCultures()
+            .FirstOrDefault(c => c.Code == currentCulture)?.Flag ?? "🌐";
+    }
+
+    private string GetCurrentCultureCode()
+    {
+        var currentCulture = LanguageService.GetCurrentCulture();
+        return currentCulture.Split('-')[0].ToUpper();
+    }
+}

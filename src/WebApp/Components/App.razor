@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using System.Globalization
+<!DOCTYPE html>
+<html lang="@GetLanguageCode()" dir="@GetTextDirection()">
 
 <head>
     <meta charset="utf-8" />
@@ -18,3 +19,16 @@
 </body>
 
 </html>
+
+@code {
+    private string GetLanguageCode()
+    {
+        return CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+    }
+
+    private string GetTextDirection()
+    {
+        // Arabic cultures use RTL
+        return CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ar" ? "rtl" : "ltr";
+    }
+}
