@@ -10,14 +10,18 @@ using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.JsonWebTokens;
 using eShop.WebApp.Services.OrderStatus.IntegrationEvents;
+using eShop.WebApp.Services;
 using eShop.Basket.API.Grpc;
 using OpenAI;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 public static class Extensions
 {
     public static void AddApplicationServices(this IHostApplicationBuilder builder)
     {
         builder.AddAuthenticationServices();
+        builder.AddLocalizationServices();
 
         builder.AddRabbitMqEventBus("EventBus")
                .AddEventBusSubscriptions();
@@ -30,6 +34,7 @@ public static class Extensions
         builder.Services.AddSingleton<BasketService>();
         builder.Services.AddSingleton<OrderStatusNotificationService>();
         builder.Services.AddSingleton<IProductImageUrlProvider, ProductImageUrlProvider>();
+        builder.Services.AddScoped<ILanguageService, LanguageService>();
         builder.AddAIServices();
 
         // HTTP and GRPC client registrations
@@ -94,6 +99,33 @@ public static class Extensions
         // Blazor auth services
         services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
         services.AddCascadingAuthenticationState();
+    }
+
+    public static void AddLocalizationServices(this IHostApplicationBuilder builder)
+    {
+        var services = builder.Services;
+        
+        // Add localization services
+        services.AddLocalization(options => options.ResourcesPath = "Resources");
+        
+        // Configure supported cultures
+        var supportedCultures = new[]
+        {
+            new CultureInfo("en-US"),
+            new CultureInfo("ar-SA")
+        };
+
+        services.Configure<RequestLocalizationOptions>(options =>
+        {
+            options.DefaultRequestCulture = new RequestCulture("en-US");
+            options.SupportedCultures = supportedCultures;
+            options.SupportedUICultures = supportedCultures;
+            
+            // Configure culture providers
+            options.RequestCultureProviders.Clear();
+            options.RequestCultureProviders.Add(new CookieRequestCultureProvider());
+            options.RequestCultureProviders.Add(new AcceptLanguageHeaderRequestCultureProvider());
+        });
     }
 
     private static void AddAIServices(this IHostApplicationBuilder builder)

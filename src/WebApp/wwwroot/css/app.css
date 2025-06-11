@@ -289,3 +289,38 @@ h1:focus {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+/* RTL Support */
+[dir="rtl"] {
+    text-align: right;
+}
+
+[dir="rtl"] .eshop-header-navbar {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .logo-header {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+/* Dropdown menus RTL adjustments */
+[dir="rtl"] .dropdown-content {
+    left: 0;
+    right: auto;
+}
+
+/* Ensure proper text direction for Arabic */
+[lang="ar"], [lang="ar-SA"] {
+    direction: rtl;
+    text-align: right;
+}
+
+[lang="ar"] body, [lang="ar-SA"] body {
+    direction: rtl;
+}
+
+/* Font support for Arabic */
+[lang="ar"], [lang="ar-SA"] {
+    font-family: 'Plus Jakarta Sans', Tahoma, Arial, sans-serif;
+}

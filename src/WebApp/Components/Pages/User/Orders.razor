@@ -1,29 +1,32 @@
 ﻿@page "/user/orders"
+@using Microsoft.Extensions.Localization
+@using eShop.WebApp.Resources
 @attribute [Authorize]
 @attribute [StreamRendering]
 @inject OrderingService OrderingService
+@inject IStringLocalizer<SharedResources> Localizer
 
-<PageTitle>Orders | AdventureWorks</PageTitle>
-<SectionContent SectionName="page-header-title">Orders</SectionContent>
+<PageTitle>@Localizer["Orders.Title"] | AdventureWorks</PageTitle>
+<SectionContent SectionName="page-header-title">@Localizer["Orders.Title"]</SectionContent>
 <OrdersRefreshOnStatusChange />
 
 <div class="orders">
 @if (orders is null)
 {
-    <p>Loading...</p>
+    <p>@Localizer["Common.Loading"]</p>
 }
 else if (orders.Length == 0)
 {
-    <p>You haven't yet placed any orders.</p>
+    <p>@Localizer["Orders.NoOrders"]</p>
 }
 else
 {
     <ul class="orders-list">
         <li class="orders-header orders-item">
-            <div>Number</div>
-            <div>Date</div>
-            <div class="total-header">Total</div>
-            <div>Status</div>
+            <div>@Localizer["Orders.Number"]</div>
+            <div>@Localizer["Orders.Date"]</div>
+            <div class="total-header">@Localizer["Orders.Total"]</div>
+            <div>@Localizer["Orders.Status"]</div>
         </li>
         @foreach (var order in orders)
         {
